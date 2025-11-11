@@ -1,0 +1,78 @@
+services:
+  # ----------------------------------------------------
+  # 1. SERVICIO DE APLICACIÓN WEB (PHP-Apache)
+  # ----------------------------------------------------
+  web:
+    build:
+      context: ./docker/php
+    container_name: laravel-apache
+    restart: unless-stopped
+    volumes:
+      - ./src:/var/www/html
+    ports:
+      - "80:80"
+      # --- El puerto de Vite ya no va aquí ---
+    depends_on:
+      - db
+    networks:
+      - laravel_network
+
+  # ----------------------------------------------------
+  # 2. SERVICIO DE BASE DE DATOS (MySQL)
+  # ----------------------------------------------------
+  db:
+    image: mysql:8.0
+    container_name: laravel-mysql
+    # ... (el resto de tu config de db) ...
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password_segura
+      MYSQL_DATABASE: laravel_db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user_password_segura
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - laravel_network
+
+  # ----------------------------------------------------
+  # 3. SERVICIO DE GESTIÓN DE BASES DE DATOS (phpMyAdmin)
+  # ----------------------------------------------------
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: laravel-phpmyadmin
+    # ... (el resto de tu config de phpmyadmin) ...
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306 
+    depends_on:
+      - db
+    networks:
+      - laravel_network
+
+  # ----------------------------------------------------
+  # 4. SERVICIO DE NODE (VITE) - ¡AHORA INDENTADO!
+  # ----------------------------------------------------
+  node:
+    image: node:22
+    container_name: laravel-vite
+    working_dir: /var/www/html
+    volumes:
+      - ./src:/var/www/html
+    ports:
+      # --- ¡El puerto de Vite AHORA VA AQUÍ! ---
+      - "5173:5173"
+    networks:
+      - laravel_network
+    command: sh -c "npm install && npm run dev --host"
+
+# ----------------------------------------------------
+# 5. REDES Y VOLÚMENES
+# ----------------------------------------------------
+networks:
+  laravel_network:
+    driver: bridge
+
+volumes:
+  dbdata:

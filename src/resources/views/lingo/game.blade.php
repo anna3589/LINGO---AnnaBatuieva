@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Conectar con Vite -->
+    @vite(['resources/css/style.css', 'resources/js/main.js'])
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Medula+One&family=Krub:wght@300;400;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <title>LINGO | Juego</title>
+</head>
+
+<body>
+    <div class="header">
+        <div class="header-left">
+            <button class="icon-btn" id="userBtn">
+                <i class="fa-solid fa-user"></i>
+            </button>
+            <button class="icon-btn" id="settingsBtn"><i class="fa-solid fa-gear"></i></button>
+            <button class="icon-btn" id="statsBtn"><i class="fa-solid fa-chart-line"></i></button>
+        </div>
+        <h1>LINGO</h1>
+        <div class="game-stats">
+            <div class="timer-container">
+                <i class="fa-regular fa-clock"></i> <span id="timer">60</span>s
+            </div>
+            <div class="attempts-counter">
+                <i class="fa-solid fa-bullseye"></i> <span id="attemptCount">1</span>/5
+            </div>
+        </div>
+    </div>
+
+    <div class="game-container">
+        <main class="main-container">
+            <div class="row" id="1">
+                <!-- Los cuadrados se agregarán mediante JavaScript -->
+            </div>
+        </main>
+
+        <div class="result hidden">
+            <!-- El resultado se agregará mediante JavaScript -->
+        </div>
+    </div>
+
+    <div class="instructions">
+        <i class="fa-regular fa-lightbulb"></i> ¡Ingresa una palabra de 5 letras. Tienes 5 intentos y 1 minuto!
+    </div>
+
+    <!-- Ventana modal de estadísticas -->
+    <div class="modal-overlay hidden" id="statsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Mis Estadísticas</h2>
+                <button class="close-btn" id="closeStatsBtn">&times;</button>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-icon"><i class="fa-solid fa-gamepad"></i></div>
+                    <div class="stat-value" id="totalGames">0</div>
+                    <div class="stat-label">Partidas jugadas</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon"><i class="fa-solid fa-medal"></i></div>
+                    <div class="stat-value" id="gamesWon">0</div>
+                    <div class="stat-label">Victorias</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon"><i class="fa-solid fa-fire"></i></div>
+                    <div class="stat-value" id="currentStreak">0</div>
+                    <div class="stat-label">Racha actual</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon"><i class="fa-solid fa-chart-line"></i></div>
+                    <div class="stat-value" id="maxStreak">0</div>
+                    <div class="stat-label">Mejor racha (tiempo)</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon"><i class="fa-solid fa-percent"></i></div>
+                    <div class="stat-value" id="winPercentage">0%</div>
+                    <div class="stat-label">Porcentaje de victorias</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="footer-buttons">
+                    <button class="button secondary" id="resetStatsBtn">Reiniciar estadísticas</button>
+                    <button class="button" id="newGameStatsBtn">Nuevo juego</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ventana modal de configuración -->
+    <div class="modal-overlay hidden" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Configuración</h2>
+                <button class="close-btn" id="closeSettingsBtn">&times;</button>
+            </div>
+            <div class="settings-content">
+                <div class="setting-item">
+                    <h3>Sonido</h3>
+                    <label class="switch">
+                        <input type="checkbox" id="soundToggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <h3>Animaciones</h3>
+                    <label class="switch">
+                        <input type="checkbox" id="animationToggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <h3>Dificultad</h3>
+                    <select id="difficultySelect">
+                        <option value="easy">Fácil</option>
+                        <option value="medium" selected>Medio</option>
+                        <option value="hard">Difícil</option>
+                    </select>
+                </div>
+                <div class="setting-actions">
+                    <button class="button secondary" id="logoutBtn">Cerrar sesión</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ventana modal de inicio de sesión -->
+    <div class="modal-overlay hidden" id="loginModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Iniciar Sesión</h2>
+                <button class="close-btn" id="closeLoginBtn">&times;</button>
+            </div>
+            <form id="loginForm">
+                <input type="email" placeholder="Email" id="email" required>
+                <input type="password" placeholder="Contraseña" id="password" required>
+                <div class="form-footer">
+                    <button type="submit" class="button">Entrar</button>
+                </div>
+            </form>
+            <p class="register-link">¿No tienes cuenta? <a href="#" id="showRegisterBtn">Regístrate aquí</a></p>
+        </div>
+    </div>
+
+    <!-- Ventana modal de registro -->
+    <div class="modal-overlay hidden" id="registerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Registrarse</h2>
+                <button class="close-btn" id="closeRegisterBtn">&times;</button>
+            </div>
+            <form id="registerForm">
+                <input type="text" placeholder="Nombre" id="registerName" required>
+                <input type="email" placeholder="Email" id="registerEmail" required>
+                <input type="password" placeholder="Contraseña" id="registerPassword" required>
+                <div class="form-footer">
+                    <button type="submit" class="button">Registrarse</button>
+                </div>
+            </form>
+            <p class="register-link">¿Ya tienes cuenta? <a href="#" id="showLoginBtn">Inicia sesión</a></p>
+        </div>
+    </div>
+</body>
+
+</html>
