@@ -43,14 +43,9 @@ Route::middleware('auth')->group(function () {
 //Route::get('/palabrasBlade', [PalabraController::class, 'indexBlade'])->name('palabras.indexBlade'); // [cite: 114, 115]
 
 // Ruta que devuelve palabras aleatorias (PDF 7)
-Route::get('/palabrasRandom/{cantidad?}', [PalabraController::class, 'indexRandom'])->name('palabras.indexRandomw'); // [cite: 484, 485]
-
-
-// --- RUTA API PARA VERIFICAR (Del PDF 9) ---
-// ¡La más importante para el juego!
-Route::get('/verificarPalabra/{palabra}', [PalabraController::class, 'verificarPalabra']) // [cite: 261]
-    ->middleware(['auth', 'verified']) // [cite: 262]
-    ->name('palabras.verificarPalabra'); // [cite: 263]
+Route::get('/palabrasRandom/{cantidad?}', [PalabraController::class, 'indexRandom'])
+    ->middleware(['auth', 'verified'])
+    ->name('palabras.indexRandomw'); // [cite: 484, 485]
 
 
 // --- RUTAS DE AUTENTICACIÓN (De Breeze) ---
@@ -61,12 +56,11 @@ Route::get('/verificarPalabra/{palabra}', [PalabraController::class, 'verificarP
          ->middleware(['auth', 'verified'])
          ->name('palabras.verificarPalabra');
 
-Route::get('/', function () {
-    return view('lingo.welcome');
-});
 
 Route::get('/game', function () {
-    return view('lingo.game'); 
-})->name('game');
+    return view(view: 'lingo.game'); 
+})
+->middleware(['auth', 'verified'])
+->name('game');
 
 require __DIR__.'/auth.php';
